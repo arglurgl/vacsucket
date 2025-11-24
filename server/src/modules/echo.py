@@ -1,4 +1,4 @@
-import lib.modules as m
+import libs.modules as m
 
 def echo(parameter):
     m.log.info("Got echo parameter: " + parameter)

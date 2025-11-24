@@ -12,8 +12,8 @@ from aiortc.contrib.media import (
     #MediaRelay
 )
 
-import lib.modules as m
-from lib.config import CONFIG
+import libs.modules as m
+from libs.config import CONFIG
 CONFIG = CONFIG["modules"]["webcam"]
 
 pcs = set()

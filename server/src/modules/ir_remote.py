@@ -1,5 +1,5 @@
-import lib.modules as m
-from lib.serial_defaults import con
+import libs.modules as m
+from libs.serial_defaults import con
 
 if con:
     def ir_send(parameter):

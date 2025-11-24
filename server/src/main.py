@@ -2,10 +2,10 @@
 import logging
 from time import sleep
 
-from lib.commands import commands
-from lib.websocket import registry
-from lib.config import CONFIG
-from lib.modules import folder_import
+from libs.commands import commands
+from libs.websocket import registry
+from libs.config import CONFIG
+from libs.modules import folder_import
 
 logging.basicConfig(
     level=logging.INFO,
