@@ -150,7 +150,9 @@ const keyMap = {
     'ArrowLeft': 's l',
     'd': 's r',
     'D': 's r',
-    'ArrowRight': 's r'
+    'ArrowRight': 's r',
+    '1': 'a p gato-miau.mp3',
+    '2':'a p miau-loco-rene.mp3'
 };
 
 const activeKeys = new Map(); // key -> interval ID
