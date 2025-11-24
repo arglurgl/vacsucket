@@ -1,49 +1,60 @@
 import json
 import asyncio
-from aiortc import RTCPeerConnection, RTCSessionDescription, VideoStreamTrack
-import av
+import platform
+
+from aiortc import (
+    MediaStreamTrack,
+    RTCPeerConnection,
+    RTCSessionDescription,
+)
+from aiortc.contrib.media import (
+    MediaPlayer,
+    #MediaRelay
+)
 
 import lib.modules as m
 from lib.config import CONFIG
 CONFIG = CONFIG["modules"]["webcam"]
 
-class V4L2Track(VideoStreamTrack):
-    """Minimal VideoStreamTrack from V4L2 device with safe stop on error."""
+pcs = set()
 
-    def __init__(self, device: str):
-        super().__init__()
-        self.container = av.open(device, format="v4l2", options=CONFIG["camera"])
-        self.stream = self.container.streams.video[0]
-        m.log.info(f"Webcam opened: {self.stream.width}x{self.stream.height} @ {self.stream.average_rate}")
+def create_local_tracks(play_from: str = "",
+                        options: dict = {"framerate": "30", "video_size": "640x480"}
+                       ) -> MediaStreamTrack:
 
-    async def recv(self) -> av.VideoFrame:
-        while True:
-            try:
-                if not self.container:
-                    raise RuntimeError("Container is closed")
-                for packet in self.container.demux(self.stream):
-                    for frame in packet.decode():
-                        if not isinstance(frame, av.VideoFrame):
-                            continue
-                        if self.stream.time_base is not None:
-                            frame.pts = int(frame.time * self.stream.time_base.denominator)
-                        frame.time_base = self.stream.time_base
-                        return frame
-            except Exception as err:
-                m.log.error("Trying to stop camera, because error: " + str(err))
-                # ensure we release the camera and mark the track stopped on error
-                try:
-                    self.stop()
-                except Exception as err:
-                    m.log.error("Stopping did not work: " + str(err))
-                raise
-            await asyncio.sleep(0)
+    # In order to serve the same webcam to multiple users we make use of
+    # a `MediaRelay`. The webcam will stay open, so it is our responsability
+    # to stop the webcam when the application shuts down in `on_shutdown`.
+    os = platform.system()
+    match os:
+        case "Linux":
+            file = play_from if play_from else "/dev/video0"
+            webcam = MediaPlayer(file,
+                                    format="v4l2",
+                                    options=options)
 
-    def stop(self):
-        if self.container:
-            self.container.close()
-            self.container = None
-        super().stop()
+        case "Darwin":
+            file = play_from if play_from else "default:none"
+            webcam = MediaPlayer(file,
+                                    format="avfoundation",
+                                    options=options)
+
+        case "Windows":
+            file = play_from if play_from else "video=Integrated Camera"
+            webcam = MediaPlayer(file,
+                                    format="dshow",
+                                    options=options)
+
+        case _:
+            file = play_from if play_from else "/dev/video0"
+            webcam = MediaPlayer("/dev/video0",
+                                    format="v4l2",
+                                    options=options)
+
+    #relay = MediaRelay()
+    #return relay.subscribe(webcam.video)
+    return webcam.video
+
 
 
 async def stream_webcam(parameter) -> str:
@@ -55,6 +66,9 @@ async def stream_webcam(parameter) -> str:
 
         if data["type"] != "offer":
             return json.dumps({"error": "Expected offer"})
+
+        local_track = create_local_tracks(data.get("device", "/dev/video0"),
+                                          options=CONFIG["camera"])
 
         # Create peer connection
         pc = RTCPeerConnection()
@@ -68,7 +82,8 @@ async def stream_webcam(parameter) -> str:
                         sender.track.stop()
                 await pc.close()
 
-        pc.addTrack(V4L2Track(data.get("device", "/dev/video0")))
+        #pc.addTrack(V4L2Track(data.get("device", "/dev/video0")))
+        pc.addTrack(local_track)
 
         # Get SDP and replace mDNS if client IP provided
         sdp = data["sdp"]
