@@ -52,9 +52,10 @@ class Soundboard:
         except ValueError:
             return self.__cheese_msg
 
-        #if not os.path.exists(filepath):
-        #    print(f"Error: File not found: {filepath}")
-        #    return
+        if not os.path.exists(filepath):
+            error_msg = f"Error: File not found: {filepath}"
+            log.error(error_msg)
+            return error_msg
 
         if not self.allow_overlap:
             self.stop_last(0)
