@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Robot Control</title>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div class="settings">
+        <label>
+            WebSocket URL:
+            <input type="text" id="controlWsUrl" value="ws://127.0.0.1:8765">
+        </label>
+    </div>
+
+    <div id="controlStatus">Status: Disconnected</div>
+
+    <div class="controls">
+        <button id="controlConnectBtn">Connect</button>
+        <button id="controlDisconnectBtn" disabled>Disconnect</button>
+    </div>
+
+    <div class="direction-pad">
+        <div class="direction-row">
+            <button class="direction-btn" data-command="s f" id="forwardBtn">↑</button>
+        </div>
+        <div class="direction-row">
+            <button class="direction-btn" data-command="s l" id="leftBtn">←</button>
+            <button class="direction-btn" data-command="s b" id="backBtn">↓</button>
+            <button class="direction-btn" data-command="s r" id="rightBtn">→</button>
+        </div>
+    </div>
+
+    <div class="keyboard-hint">
+        Use WASD or Arrow Keys to control
+    </div>
+
+    <div class="keyboard-capture">
+        <button id="captureToggle" class="capture-btn">
+            <span id="captureStatus">🔴</span> Keyboard: <strong id="captureText">OFF</strong>
+        </button>
+        <div class="capture-hint">Click to toggle | ESC to disable</div>
+    </div>
+
+    <script src="control.js"></script>
+</body>
+</html>

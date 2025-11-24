@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Robot Webcam - WebRTC</title>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+</head>
+<body>
+    <div class="settings">
+        <label>
+            WebSocket URL:
+            <input type="text" id="wsUrl" value="ws://127.0.0.1:8765">
+        </label>
+        <label>
+            Device:
+            <input type="text" id="device" value="/dev/video0">
+        </label>
+        <label>
+            Client IP (optional):
+            <input type="text" id="clientIp" value="127.0.0.1">
+        </label>
+        <label>
+            STUN Server (optional):
+            <input type="text" id="stunServer" value="" placeholder="stun:server:port">
+        </label>
+    </div>
+
+    <div id="status">Status: Disconnected</div>
+
+    <div class="controls">
+        <button id="connectBtn">Connect</button>
+        <button id="disconnectBtn" disabled>Disconnect</button>
+    </div>
+
+    <video id="video" autoplay playsinline muted></video>
+
+    <script src="webcam.js"></script>
+</body>
+</html>
