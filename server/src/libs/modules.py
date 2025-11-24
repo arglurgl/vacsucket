@@ -10,7 +10,7 @@ from libs.commands import commands
 
 log = logging.getLogger(__name__)
 
-def folder_import(folder: str, show_traceback: bool = False) -> List[ModuleType]:
+def folder_import(folder: Path, show_traceback: bool = False) -> List[ModuleType]:
     """
     Import every .py file directly inside `folder` (skip __init__.py).
     Imported modules are placed in sys.modules as "<folder_name>.<module_stem>".

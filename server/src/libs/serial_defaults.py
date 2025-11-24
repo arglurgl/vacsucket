@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import serial
-from .config import CONFIG
+from libs.config import CONFIG
 
 
 # CONFIG = {
