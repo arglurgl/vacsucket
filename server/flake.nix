@@ -1,9 +1,14 @@
 {
   description = "Flake using pyproject.toml metadata";
 
-  inputs.pyproject-nix.url = "github:pyproject-nix/pyproject.nix";
-  inputs.pyproject-nix.inputs.nixpkgs.follows = "nixpkgs";
+  inputs = {
+    pyproject-nix = {
+      url = "github:pyproject-nix/pyproject.nix";
+      inputs.nixpkgs.follows = "nixos-unstable";
+    };
 
+    nixos-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
+  };
   outputs =
     { nixpkgs, pyproject-nix, ... }:
     let

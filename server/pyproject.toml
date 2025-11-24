@@ -6,7 +6,7 @@ authors = [ ]
 requires-python = ">=3.13"
 dependencies = [
   "websockets",
-  "pyserial"
-  #"aiortc",
-  #"av"
+  "pyserial",
+  "aiortc",
+  "av"
 ]
