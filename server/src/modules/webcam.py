@@ -75,7 +75,7 @@ async def stream_webcam(parameter) -> str:
 
         # Create peer connection
         @pc.on("connectionstatechange")
-        async def _on_connectionstatechange():
+        async def _on_connectionstatechange(): # pyright: ignore
             if pc.connectionState in ("disconnected", "failed"):
                 m.log.info("disconnected or failed connection")
                 # Stop all tracks and close peer connection on bad state
