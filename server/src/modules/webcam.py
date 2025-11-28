@@ -60,6 +60,8 @@ def webcam_track(play_from: str = "",
 async def stream_webcam(parameter) -> str:
     """Handle WebRTC with single request/response (non-trickle ICE)"""
     m.log.info("Trying to start camera stream")
+    pc = RTCPeerConnection()
+
     try:
         # Parse client offer
         data = json.loads(parameter)
@@ -72,7 +74,6 @@ async def stream_webcam(parameter) -> str:
 
 
         # Create peer connection
-        pc = RTCPeerConnection()
         @pc.on("connectionstatechange")
         async def _on_connectionstatechange():
             if pc.connectionState in ("disconnected", "failed"):
