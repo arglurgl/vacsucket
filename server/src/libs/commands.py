@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import logging
-from typing import Callable
+from typing import Any, Callable, Coroutine
 from websockets.asyncio.server import ServerConnection
 from asyncio import iscoroutine
 
@@ -17,8 +17,12 @@ class Commands(dict):
         log.warning(log_message)
         return await self.__websocket.send(log_message)
 
-    def register(self, command: str,
-                 function: Callable[[str], str | list | dict | None]):
+    CommandReturn = str | list | dict | None
+    def register(
+            self,
+            command: str,
+            function: Callable[[str], CommandReturn | Coroutine[Any, Any, CommandReturn]]
+        ):
         log.info("Registering new command: " + command)
         self[command] = {
             "function": function,
