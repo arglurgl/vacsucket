@@ -84,8 +84,11 @@ async def stream_webcam(parameter) -> str:
                         sender.track.stop()
                 await pc.close()
 
-        #pc.addTrack(V4L2Track(data.get("device", "/dev/video0")))
-        pc.addTrack(local_track)
+
+        if local_track is not None:
+            pc.addTrack(local_track)
+        else:
+            raise ValueError("Track must not be None")
 
         # Get SDP and replace mDNS if client IP provided
         sdp = data["sdp"]
