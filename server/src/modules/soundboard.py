@@ -54,7 +54,7 @@ class Soundboard:
 
         if not os.path.exists(filepath):
             error_msg = f"Error: File not found: {filepath}"
-            log.error(error_msg)
+            m.log.error(error_msg)
             return error_msg
 
         if not self.allow_overlap:
