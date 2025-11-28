@@ -1,6 +1,7 @@
 import json
 import asyncio
 import platform
+from typing import Optional
 
 from aiortc import (
     MediaStreamTrack,
@@ -16,11 +17,10 @@ import libs.modules as m
 from libs.config import CONFIG
 CONFIG = CONFIG["modules"]["webcam"]
 
-pcs = set()
 
-def create_local_tracks(play_from: str = "",
-                        options: dict = {"framerate": "30", "video_size": "640x480"}
-                       ) -> MediaStreamTrack:
+def webcam_track(play_from: str = "",
+                 options: dict = {"framerate": "30", "video_size": "640x480"}
+                ) -> Optional[MediaStreamTrack]:
 
     # In order to serve the same webcam to multiple users we make use of
     # a `MediaRelay`. The webcam will stay open, so it is our responsability
@@ -67,8 +67,9 @@ async def stream_webcam(parameter) -> str:
         if data["type"] != "offer":
             return json.dumps({"error": "Expected offer"})
 
-        local_track = create_local_tracks(data.get("device", "/dev/video0"),
-                                          options=CONFIG["camera"])
+        local_track = webcam_track(data.get("device", "/dev/video0"),
+                                   options=CONFIG["camera"])
+
 
         # Create peer connection
         pc = RTCPeerConnection()
