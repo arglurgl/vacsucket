@@ -150,7 +150,7 @@ def sound(parameter):
         case "p":
             return S.play_sound(Path(sub_parameter))
         case "l":
-            return S.list_sounds(Path(sub_parameter))
+            return ", ".join(S.list_sounds(Path(sub_parameter)))
         case _:
             log_message = "Recieved unkown sub_command and parameter: " + parameter
             m.log.warning(log_message)
