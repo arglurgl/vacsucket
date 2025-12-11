@@ -45,6 +45,17 @@ cd vacsucket
 - Use soundboard and other modules via the web or command line
 - Command-line tools: run `server/src/tester/repl.py` or `wasd.py` for direct control
 
+## SPI Display Setup Notes
+Add to /boot/firmware/config.txt:
+```
+dtparam=spi=on
+dtoverlay=piscreen,drm,speed=20000000,fps=30
+```
+
+Via bash: increase FPS by adding a mode with proper FPS (else display reports 0.007 as only possible FPS)
+```
+wlr-randr --output SPI-1 --custom-mode 480x320@30
+```
 
 ## License
 GPL v3
