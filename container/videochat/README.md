@@ -16,8 +16,7 @@ sudo docker run --name galene \
 ```
 
 - point browser to https://localhost:8443/group/standard/
-- user: pleasedont password: hackcutethings 
+- use any user/password
 
 ## ToDo
-- add proper users and groups with sensible permissions
-- get passwords from secrets, not hardcoded test passwords
+- get passwords from secrets, not hardcoded password hashes
