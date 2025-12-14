@@ -1,1 +1,19 @@
-{"users": {"pleasedont":{"password":"hackcutethings", "permissions":"op"}}}
+{
+    "users": {
+        "admin": {
+            "password": {"type":"bcrypt","key":"$2a$14$4u6RC9S0TpTzhYtn2zmjVeK27qLjp.FsBEmotiGR8S7586jKAVoR2"},
+            "permissions": "op"
+        }
+    },
+    
+    "wildcard-user": {
+        "password": {
+            "type": "wildcard"
+        },
+        "permissions": "present"
+    },
+
+    "public": true,
+    "max-clients": 5,
+    "allow-recording": false
+}
