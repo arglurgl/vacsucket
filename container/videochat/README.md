@@ -1,6 +1,6 @@
 This container is based on https://github.com/deburau/galene-docker/ which is MIT licensed Copyright (c) 2021-2022 Werner Fleck
 
-## Build and Run:
+## Build and Testrun:
 ```
 sudo docker build --tag galene .
 ```
@@ -12,6 +12,8 @@ sudo docker run --name galene \
   --env GALENE_GROUPS=/groups \
   --volume $PWD/data:/data \
   --volume $PWD/groups:/groups \
+  --volume $PWD/../../client/web:/opt/galene/static/client \
+  --rm \
   galene
 ```
 

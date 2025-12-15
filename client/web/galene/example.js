@@ -55,7 +55,7 @@ function serverConnect(status, token) {
             {type: 'token', token: token} :
             {type: 'password', password: ''};
         // join the group and wait for the onjoined callback
-        await this.join("public", "example-user", creds);
+        await this.join("standard", "example-user", creds);
     };
     conn.onchat = onChat;
     conn.onusermessage = onUserMessage;
@@ -76,7 +76,8 @@ function serverConnect(status, token) {
  * @parm {string} username
  * @parm {string} message
  */
-function onChat(id, dest, username, time, privileged, history, kind, message) {
+function onChat(id, source, dest, username, time, privileged, history, kind, message) 
+{
     let p = document.createElement('p');
     p.textContent = `${username}${dest ? ' → ' + dest : ''}: ${message}`;
     let container = document.getElementById('chat');
@@ -228,11 +229,11 @@ async function showCamera(conn) {
     let s = conn.newUpStream();
     s.label = 'camera';
     s.setStream(ms);
-    let v = makeVideoElement(s.localId);
+    //let v = makeVideoElement(s.localId); // disabled local preview
     s.onclose = function(replace) {
         s.stream.getTracks().forEach(t => t.stop());
-        v.srcObject = null;
-        v.parentNode.removeChild(v);
+        //v.srcObject = null; // disabled local preview
+        //v.parentNode.removeChild(v); // disabled local preview
     }
 
     function addTrack(t) {
@@ -255,9 +256,9 @@ async function showCamera(conn) {
     ms.getTracks().forEach(addTrack);
 
     // Connect the MediaStream to the video element and start playing.
-    v.srcObject = ms;
-    v.muted = true;
-    v.play();
+    //v.srcObject = ms; // disabled local preview
+    //v.muted = true; // disabled local preview
+    //v.play(); // disabled local preview
 }
 
 /**
@@ -307,7 +308,7 @@ document.getElementById('start').onclick = async function(e) {
     let button = /** @type{HTMLButtonElement} */(this);
     button.hidden = true;
     try {
-        await start("/group/public/");
+        await start("/group/standard/");
     } catch(e) {
         displayError(e);
     };
