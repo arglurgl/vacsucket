@@ -181,6 +181,7 @@ async function onJoined(kind, group, perms, status, data, error, message) {
         displayStatus(`Connected as ${this.username} in group ${this.group}.`);
         enableShow(this, true);
         // request videos from the server
+        console.log("Requesting streams");
         this.request({'': ['audio', 'video']});
         break;
     default:
@@ -279,10 +280,18 @@ async function hide(conn, s) {
  * @parm {Stream} c
  */
 function onDownStream(s) {
+    console.log(`Received downstream stream ${s.label} (${s.localId}, ${s.id}, ${s.username})`);
+    if (s.username != 'robot') {
+        console.log("Rejecting non-robot stream");
+        s.abort();
+        return;
+    }
+    console.log("Setting up robot stream");
     s.onclose = function(replace) {
         let v = getVideoElement(s.localId);
         v.srcObject = null;
         v.parentNode.removeChild(v);
+        console.log("Closed robot stream");
     }
     s.ondowntrack = function(track, transceiver, stream) {
         let v = getVideoElement(s.localId);
@@ -308,6 +317,7 @@ document.getElementById('start').onclick = async function(e) {
     let button = /** @type{HTMLButtonElement} */(this);
     button.hidden = true;
     try {
+        console.log("Starting connection");
         await start("/group/standard/");
     } catch(e) {
         displayError(e);
