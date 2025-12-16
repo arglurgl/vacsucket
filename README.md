@@ -53,8 +53,9 @@ dtoverlay=piscreen,drm,speed=20000000,fps=30
 ```
 
 Via bash: increase FPS by adding a mode with proper FPS (else display reports 0.007 as only possible FPS)
+10 FPS seems OK, 30 seems to lead to desync over time, but unclear if real or imagined
 ```
-wlr-randr --output SPI-1 --custom-mode 480x320@30
+wlr-randr --output SPI-1 --custom-mode 480x320@10
 ```
 
 ## License

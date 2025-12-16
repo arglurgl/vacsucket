@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+
+sleep 5 && wlr-randr --output SPI-1 --custom-mode 480x320@10 &
+
+/usr/bin/cage -- \
+  /usr/bin/chromium \
+    --start-fullscreen \
+    --kiosk \
+    'https://www.youtube.com/watch?v=DKP16d_WdZM'
+
+exit $?

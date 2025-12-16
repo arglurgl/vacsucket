@@ -7,7 +7,7 @@ sudo docker build --tag galene .
 
 ```
 sudo docker run --name galene \
-  --publish 127.0.0.1:8443:8443 \
+  --publish 0.0.0.0:8443:8443 \
   --env GALENE_DATA=/data \
   --env GALENE_GROUPS=/groups \
   --volume $PWD/data:/data \
