@@ -25,3 +25,4 @@ sudo docker run --name galene \
 
 ## ToDo
 - get passwords from secrets, not hardcoded password hashes
+- replace bind mounts with copy in dockerfile
