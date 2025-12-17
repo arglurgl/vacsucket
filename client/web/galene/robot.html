@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>Robot-Side Client</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
-
-  <body>
+<head>
+  <title>Robot-Side Client</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="stage">
     <div id="videos"></div>
-    
-    <!-- <div><button id="show" disabled>Enable/Disable Stream</button></div> -->
+  </div>
 
-    <p id="status"></p>
-    <p id="error"></p>
+  <p id="status"></p>
+  <p id="error"></p>
 
-    <script src="/protocol.js" defer></script>
-    <script src="galene_client.js" data-role='robot' defer></script>
-  </body>
+  <script src="/protocol.js" defer></script>
+  <script src="galene_client.js" data-role='robot' defer></script>
+</body>
 </html>
