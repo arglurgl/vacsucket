@@ -187,6 +187,9 @@ async function onJoined(kind, group, perms, status, data, error, message) {
         // request videos from the server
         console.log("Requesting streams");
         this.request({'': ['audio', 'video']});
+        // automatically start streaming camera
+        console.log("Auto-starting camera stream");
+        await showCamera(this);
         break;
     default:
         displayError(`Unexpected state ${kind}.`);
