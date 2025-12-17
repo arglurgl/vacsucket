@@ -55,7 +55,8 @@ function serverConnect(status, token) {
             {type: 'token', token: token} :
             {type: 'password', password: ''};
         // join the group and wait for the onjoined callback
-        await this.join("standard", "example-user", creds);
+        console.log("Joining as role " + client_role);
+        await this.join("standard", client_role, creds);
     };
     conn.onchat = onChat;
     conn.onusermessage = onUserMessage;
@@ -202,6 +203,7 @@ async function onJoined(kind, group, perms, status, data, error, message) {
 function makeVideoElement(id) {
     let v = document.createElement('video');
     v.id = 'video-' + id;
+    v.controls = true;
     let container = document.getElementById('videos');
     container.appendChild(v);
     return v;
@@ -281,17 +283,17 @@ async function hide(conn, s) {
  */
 function onDownStream(s) {
     console.log(`Received downstream stream ${s.label} (${s.localId}, ${s.id}, ${s.username})`);
-    if (s.username != 'robot') {
-        console.log("Rejecting non-robot stream");
+    if (s.username != want_stream) {
+        console.log("Stream is not from user '" + want_stream + "', aborting");
         s.abort();
         return;
     }
-    console.log("Setting up robot stream");
+    console.log("Setting up wanted stream");
     s.onclose = function(replace) {
         let v = getVideoElement(s.localId);
         v.srcObject = null;
         v.parentNode.removeChild(v);
-        console.log("Closed robot stream");
+        console.log("Closed wanted stream");
     }
     s.ondowntrack = function(track, transceiver, stream) {
         let v = getVideoElement(s.localId);
@@ -313,13 +315,29 @@ function displayError(message) {
     document.getElementById('error').textContent = message;
 }
 
-document.getElementById('start').onclick = async function(e) {
-    let button = /** @type{HTMLButtonElement} */(this);
-    button.hidden = true;
-    try {
+// Determine the client role from the script data attribute
+const client_role = document.currentScript.dataset.role || null;
+let want_stream;
+if (client_role === "robot") {
+    console.log("Client role is robot");
+    username = "robot";
+    want_stream = "driver";
+} else if (client_role === "driver") {
+    console.log("Client role is driver");
+    username = "driver";
+    want_stream = "robot";
+} else {
+    console.log("Client role is unknown");
+    username = "no-role-set-user";
+    want_stream = null;
+}
+
+// executed when page is loaded
+window.onload = async function() {
+    try {        
         console.log("Starting connection");
-        await start("/group/standard/");
+        await start("/group/standard/"); 
     } catch(e) {
         displayError(e);
-    };
-}
+    }
+};
