@@ -79,10 +79,13 @@ function serverConnect(status, token) {
  */
 function onChat(id, source, dest, username, time, privileged, history, kind, message) 
 {
-    let p = document.createElement('p');
-    p.textContent = `${username}${dest ? ' → ' + dest : ''}: ${message}`;
-    let container = document.getElementById('chat');
-    container.appendChild(p);
+    // chat is disabled
+    return;
+
+    //let p = document.createElement('p');
+    //p.textContent = `${username}${dest ? ' → ' + dest : ''}: ${message}`;
+    //let container = document.getElementById('chat');
+    //container.appendChild(p);
 }
 
 /**
