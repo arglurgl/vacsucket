@@ -279,6 +279,18 @@ async function hide(conn, s) {
 }
 
 /**
+ * Display an error message.
+ *
+ * @parm {string} message
+ */
+function displayError(message) {
+    document.getElementById('error').textContent = message;
+}
+
+// Track the current active downstream stream
+let currentDownStream = null;
+
+/**
  * Called when the server pushes a stream.
  *
  * @this {ServerConnection}
@@ -291,11 +303,29 @@ function onDownStream(s) {
         s.abort();
         return;
     }
+    
+    // Close the previous stream if it exists
+    if (currentDownStream) {
+        console.log("Closing previous stream");
+        let v = getVideoElement(currentDownStream.localId);
+        if (v) {
+            v.srcObject = null;
+            v.parentNode.removeChild(v);
+        }
+    }
+    
     console.log("Setting up wanted stream");
+    currentDownStream = s;
+    
     s.onclose = function(replace) {
-        let v = getVideoElement(s.localId);
-        v.srcObject = null;
-        v.parentNode.removeChild(v);
+        if (currentDownStream === s) {
+            let v = getVideoElement(s.localId);
+            if (v) {
+                v.srcObject = null;
+                v.parentNode.removeChild(v);
+            }
+            currentDownStream = null;
+        }
         console.log("Closed wanted stream");
     }
     s.ondowntrack = function(track, transceiver, stream) {
@@ -307,15 +337,6 @@ function onDownStream(s) {
     let v = makeVideoElement(s.localId);
     v.srcObject = s.stream;
     v.play();
-}
-
-/**
- * Display an error message.
- *
- * @parm {string} message
- */
-function displayError(message) {
-    document.getElementById('error').textContent = message;
 }
 
 // Determine the client role from the script data attribute
