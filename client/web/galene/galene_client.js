@@ -141,7 +141,8 @@ function cameraStream(conn) {
  * @parm{boolean} enable
  */
 function enableShow(conn, enable) {
-    let b = /** @type{HTMLButtonElement} */(document.getElementById('show'));
+    let b = document.getElementById('show');
+    if (!b) return; // button doesn't exist, skip
     if(enable) {
         b.onclick = function() {
             let s = cameraStream(conn);
@@ -189,7 +190,11 @@ async function onJoined(kind, group, perms, status, data, error, message) {
         this.request({'': ['audio', 'video']});
         // automatically start streaming camera
         console.log("Auto-starting camera stream");
-        await showCamera(this);
+        try {
+            await showCamera(this);
+        } catch(e) {
+            console.error("Auto-start failed:", e);
+        }
         break;
     default:
         displayError(`Unexpected state ${kind}.`);
@@ -232,42 +237,47 @@ function getVideoElement(id) {
  * @parm {ServerConnection} conn
  */
 async function showCamera(conn) {
-    let ms = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
+    try {
+        let ms = await navigator.mediaDevices.getUserMedia({audio: true, video: true});
 
-    /* Send the new stream to the server */
-    let s = conn.newUpStream();
-    s.label = 'camera';
-    s.setStream(ms);
-    //let v = makeVideoElement(s.localId); // disabled local preview
-    s.onclose = function(replace) {
-        s.stream.getTracks().forEach(t => t.stop());
-        //v.srcObject = null; // disabled local preview
-        //v.parentNode.removeChild(v); // disabled local preview
-    }
-
-    function addTrack(t) {
-        t.oneneded = function(e) {
-            ms.onaddtrack = null;
-            s.onremovetrack = null;
-            s.close();
+        /* Send the new stream to the server */
+        let s = conn.newUpStream();
+        s.label = 'camera';
+        s.setStream(ms);
+        //let v = makeVideoElement(s.localId); // disabled local preview
+        s.onclose = function(replace) {
+            s.stream.getTracks().forEach(t => t.stop());
+            //v.srcObject = null; // disabled local preview
+            //v.parentNode.removeChild(v); // disabled local preview
         }
-        s.pc.addTransceiver(t, {
-            direction: 'sendonly',
-            streams: [ms],
-        });
-    }
 
-    // Make sure all future tracks are added.
-    s.onaddtrack = function(e) {
-        addTrack(e.track);
-    }
-    // Add any existing tracks.
-    ms.getTracks().forEach(addTrack);
+        function addTrack(t) {
+            t.oneneded = function(e) {
+                ms.onaddtrack = null;
+                s.onremovetrack = null;
+                s.close();
+            }
+            s.pc.addTransceiver(t, {
+                direction: 'sendonly',
+                streams: [ms],
+            });
+        }
 
-    // Connect the MediaStream to the video element and start playing.
-    //v.srcObject = ms; // disabled local preview
-    //v.muted = true; // disabled local preview
-    //v.play(); // disabled local preview
+        // Make sure all future tracks are added.
+        s.onaddtrack = function(e) {
+            addTrack(e.track);
+        }
+        // Add any existing tracks.
+        ms.getTracks().forEach(addTrack);
+
+        // Connect the MediaStream to the video element and start playing.
+        //v.srcObject = ms; // disabled local preview
+        //v.muted = true; // disabled local preview
+        //v.play(); // disabled local preview
+    } catch(e) {
+        console.error("Error starting camera:", e);
+        displayError("Failed to start camera: " + e.message);
+    }
 }
 
 /**
