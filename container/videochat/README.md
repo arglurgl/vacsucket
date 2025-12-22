@@ -22,7 +22,10 @@ sudo docker run --name galene \
 
 - point browser to https://localhost:8443/group/standard/
 - use any user/password
+- driver interface: https://localhost:8443/client/index.html
+- robot interface: https://localhost:8443/client/galene/robot.html
 
 ## ToDo
 - get passwords from secrets, not hardcoded password hashes
 - replace bind mounts with copy in dockerfile
+- overwrite galene /opt/galene/static/index.html to forward to driver interface, maybe add small info message and manual forward link
