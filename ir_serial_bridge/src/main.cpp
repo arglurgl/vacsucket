@@ -10,7 +10,7 @@
 //#define USE_NO_SEND_PWM           // Use no carrier PWM, just simulate an active low receiver signal. Overrides SEND_PWM_BY_TIMER definition
 #define IR_SEND_PIN 10
 #define COMMAND_DELAY 10 //us
-#define COMMAND_REPEATS 3
+#define COMMAND_REPEATS 2
 
 void onoff(){  
   IrSender.sendNEC(0xF700, 0xE, COMMAND_REPEATS); 
