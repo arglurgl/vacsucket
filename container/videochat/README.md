@@ -10,6 +10,7 @@ sudo docker build --tag galene .
 sudo docker run --name galene \
   --publish 0.0.0.0:8443:8443 \
   --env GALENE_TURN="$(hostname -I | cut -d' ' -f1):1194" \
+  --env GALENE_INSECURE=1 \
   --network=host \
   --env GALENE_DATA=/data \
   --env GALENE_GROUPS=/groups \
