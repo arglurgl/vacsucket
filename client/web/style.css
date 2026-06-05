@@ -4,6 +4,10 @@ body {
     padding: 10px;
     background: #1a1a1a;
     color: #fff;
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .settings {
@@ -103,6 +107,12 @@ button:disabled {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background 0.1s, transform 0.1s;
+}
+
+.direction-btn.active {
+    background: #388E3C;
+    transform: scale(0.93);
 }
 
 .keyboard-hint {
@@ -170,3 +180,168 @@ button:disabled {
     height: 100%;
     border: none;
 }
+
+/* ── WiFi Stats Panel ────────────────────────────────────────── */
+
+.ws-panel {
+    margin-top: auto;
+    padding: 12px 14px;
+    background: #2a2a2a;
+    border-radius: 8px;
+    border-left: 3px solid #4CAF50;
+    font-size: 13px;
+}
+
+.ws-placeholder {
+    color: #555;
+    text-align: center;
+    margin: 6px 0;
+    font-size: 13px;
+}
+
+/* Header */
+.ws-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.ws-icon { font-size: 17px; line-height: 1; }
+
+.ws-iface {
+    font-family: monospace;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+}
+
+.ws-quality-label {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.ws-time {
+    margin-left: auto;
+    color: #555;
+    font-size: 11px;
+    font-family: monospace;
+}
+
+/* Progress bars */
+.ws-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 10px;
+}
+
+.ws-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ws-bar-label {
+    width: 44px;
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    flex-shrink: 0;
+}
+
+.ws-bar-track {
+    flex: 1;
+    height: 7px;
+    background: #3c3c3c;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.ws-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease, background-color 0.5s ease;
+}
+
+.ws-bar-val {
+    width: 72px;
+    text-align: right;
+    font-family: monospace;
+    font-size: 12px;
+    color: #bbb;
+    flex-shrink: 0;
+}
+
+/* Meta row */
+.ws-meta {
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    padding: 7px 0;
+    border-top: 1px solid #333;
+    border-bottom: 1px solid #333;
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 10px;
+}
+
+.ws-meta strong {
+    color: #ddd;
+    margin-left: 2px;
+}
+
+.mono { font-family: monospace; }
+
+.ws-meta-warn,
+.ws-meta-warn strong { color: #FFC107 !important; }
+
+/* Discarded packets */
+.ws-subheader {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+.ws-packets {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.ws-pkt {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #333;
+    border-radius: 5px;
+    padding: 4px 9px;
+    min-width: 38px;
+    border: 1px solid transparent;
+}
+
+.ws-pkt-bad {
+    background: #3a1f1f;
+    border-color: #c62828;
+}
+
+.ws-pkt-name {
+    font-size: 9px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 1px;
+}
+
+.ws-pkt-val {
+    font-family: monospace;
+    font-size: 13px;
+    color: #eee;
+    line-height: 1.2;
+}
+
+.ws-pkt-bad .ws-pkt-name { color: #e57373; }
+.ws-pkt-bad .ws-pkt-val  { color: #ef9a9a; }

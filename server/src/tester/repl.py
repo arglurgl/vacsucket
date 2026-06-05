@@ -18,8 +18,8 @@ def connections():
         return
 
     connections = [
-        "ws://192.168.13.230:8765",
-        "ws://localhost:8765"
+        "ws://localhost:8765",
+        "ws://192.168.13.230:8765"
     ]
     for address in connections:
         try:

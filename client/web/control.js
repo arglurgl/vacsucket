@@ -3,6 +3,8 @@ const REPEAT_INTERVAL_MS = 100; // Time between repeated commands when holding b
 
 let controlWs = null;
 let keyboardCaptureEnabled = false;
+let statsTimer = null;
+
 const controlElements = {
     status: document.getElementById('controlStatus'),
     connectBtn: document.getElementById('controlConnectBtn'),
@@ -42,11 +44,15 @@ function connectControl() {
 
         controlWs.onopen = () => {
             updateControlStatus('Connected');
+            requestStats();
+            statsTimer = setInterval(requestStats, 3000);
         };
 
         controlWs.onclose = () => {
             updateControlStatus('Disconnected');
             toggleControlButtons(false);
+            clearInterval(statsTimer);
+            statsTimer = null;
         };
 
         controlWs.onerror = (e) => {
@@ -56,6 +62,12 @@ function connectControl() {
 
         controlWs.onmessage = (e) => {
             console.log('Received:', e.data);
+            try {
+                const payload = JSON.parse(e.data);
+                if (Array.isArray(payload) && typeof payload[0] === 'object') {
+                    renderWifiStats(payload[0]);
+                }
+            } catch { /* plain-text message */ }
         };
 
     } catch (e) {
@@ -200,3 +212,70 @@ window.addEventListener('beforeunload', () => {
     activeKeys.forEach((intervalId) => clearInterval(intervalId));
     disconnectControl();
 });
+
+// ── WiFi Stats ────────────────────────────────────────────────
+
+function requestStats() {
+    sendCommand('stats wifi');
+}
+
+function renderWifiStats(data) {
+    const panel = document.getElementById('wifiStats');
+    if (!panel) return;
+
+    const ifaceKey = Object.keys(data)[0];
+    const iface    = data[ifaceKey];
+    const name     = ifaceKey.replace(/:$/, '');
+    const { Quality: q, Discarded_packets: dp, Missed_beacon: mb, status } = iface;
+
+    const linkPct = Math.min(100, Math.round((q.link / 70) * 100));
+    const sigPct  = Math.max(0, Math.min(100, Math.round(((q.level + 100) / 70) * 100)));
+
+    const [color, label] =
+        q.level >= -50 ? ['#4CAF50', 'Excellent'] :
+        q.level >= -60 ? ['#8BC34A', 'Good']      :
+        q.level >= -70 ? ['#FFC107', 'Fair']       :
+                         ['#f44336', 'Poor'];
+
+    const noiseStr   = q.noise <= -255 ? 'N/A' : `${q.noise} dBm`;
+    const totalDrops = Object.values(dp).reduce((a, v) => a + v, 0) + mb;
+
+    panel.innerHTML = `
+        <div class="ws-header">
+            <span>📶</span>
+            <span class="ws-iface">${name}</span>
+            <span class="ws-quality" style="color:${color}">${label}</span>
+            <span class="ws-time">${new Date().toLocaleTimeString()}</span>
+        </div>
+        <div class="ws-bars">
+            <div class="ws-bar-row">
+                <span class="ws-bar-label">Link</span>
+                <div class="ws-bar-track">
+                    <div class="ws-bar-fill" style="width:${linkPct}%;background:${color}"></div>
+                </div>
+                <span class="ws-bar-val">${q.link} / 70</span>
+            </div>
+            <div class="ws-bar-row">
+                <span class="ws-bar-label">Signal</span>
+                <div class="ws-bar-track">
+                    <div class="ws-bar-fill" style="width:${sigPct}%;background:${color}"></div>
+                </div>
+                <span class="ws-bar-val">${q.level} dBm</span>
+            </div>
+        </div>
+        <div class="ws-meta">
+            <span>Noise <strong>${noiseStr}</strong></span>
+            <span>Status <strong class="mono">0x${status}</strong></span>
+            <span class="${totalDrops > 0 ? 'ws-warn' : ''}">Dropped <strong>${totalDrops}</strong></span>
+        </div>
+        <div class="ws-subheader">Discarded packets</div>
+        <div class="ws-packets">
+            ${[['nwid', dp.nwid], ['crypt', dp.crypt], ['frag', dp.frag],
+               ['retry', dp.retry], ['misc', dp.misc], ['beacon', mb]
+              ].map(([k, v]) => `
+                <span class="ws-pkt ${v > 0 ? 'ws-pkt-bad' : ''}">
+                    <span class="ws-pkt-name">${k}</span>
+                    <span class="ws-pkt-val">${v}</span>
+                </span>`).join('')}
+        </div>`;
+}
