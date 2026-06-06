@@ -1,5 +1,6 @@
 import libs.modules as m
 import json
+from os import getenv
 
 
 def parse_proc_wifi(line_list: list):
@@ -39,7 +40,11 @@ def stats(parameter):
     match parameter.split()[0]:
         case "wifi":
             m.log.info("processing wifi stats ...")
-            with open("/proc/net/wireless", "r") as file_d:
+            try:
+                proc_wireless = getenv("PROC_WIRELESS")
+            except Exception:
+                proc_wireless = "/proc/net/wireless"
+            with open(proc_wireless, "r") as file_d:
                 return json.dumps(parse_proc_wifi(file_d.readlines()))
 
     m.log.warning("no parameter matched: " + str(parameter))
